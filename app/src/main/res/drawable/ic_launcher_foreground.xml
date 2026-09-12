@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 108dp adaptive-icon foreground; the safe zone is the centre 66dp. A progress
+     ring three-quarters full, in the Dark Terminal green. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M54,30a24,24 0 1,1 -0.01,0"
+        android:strokeWidth="6"
+        android:strokeColor="#FF1C2A1F"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M54,30A24,24 0 1,1 30,54"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:strokeColor="#FF39FF14"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M54,54m-4,0a4,4 0 1,1 8,0a4,4 0 1,1 -8,0"
+        android:fillColor="#FF39FF14" />
+</vector>
