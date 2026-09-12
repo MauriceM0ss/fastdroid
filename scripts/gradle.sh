@@ -9,11 +9,13 @@
 set -euo pipefail
 
 repo="$(cd "$(dirname "$0")/.." && pwd)"
-image=fastdroid-build
+# Tagged by the Dockerfile's hash, so editing the Dockerfile (e.g. a new SDK
+# platform) rebuilds the image on the next run instead of silently reusing the old one.
+image="fastdroid-build:$(sha256sum "$repo/docker/Dockerfile" | cut -c1-12)"
 home_cache="$HOME/.cache/fastdroid-build"
 
 if ! docker image inspect "$image" > /dev/null 2>&1; then
-  docker build -t "$image" "$repo/docker"
+  docker build -t "$image" "$repo/docker" >&2
 fi
 
 mkdir -p "$home_cache" "$HOME/.android"

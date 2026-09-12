@@ -14,6 +14,9 @@ permission.
 - **Ongoing notification** — start time, target end and a live elapsed clock, plus
   an *End fast* button. The system renders the clock itself, so nothing runs in the
   background. Swiping it away puts it straight back while a fast is running.
+- **Status-bar timer chip** — on Android 16+ the running fast is a Live Update: the
+  elapsed time shows as a chip in the status bar and on the lock screen. It can be
+  switched off per app in system settings; FastDroid's Settings shows its state.
 - **Target alert** — one alarm at the target time. The fast keeps going until you
   end it.
 - **End any time** — ending early is a normal outcome, not a failure. Ending from

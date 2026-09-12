@@ -101,4 +101,6 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     fun canNotify(): Boolean = container.notifier.canNotify()
+
+    fun canPromote(): Boolean = container.notifier.canPromote()
 }

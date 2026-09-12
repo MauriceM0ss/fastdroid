@@ -56,10 +56,14 @@ fun SettingsScreen(vm: MainViewModel) {
     val theme by vm.theme.collectAsStateWithLifecycle()
 
     var canNotify by remember { mutableStateOf(vm.canNotify()) }
+    var canPromote by remember { mutableStateOf(vm.canPromote()) }
+    // Both can be changed in system settings while the app is in the background.
     LifecycleResumeEffect(Unit) {
-        val now = vm.canNotify()
-        if (now && !canNotify) vm.resyncNotifications()
-        canNotify = now
+        val notifyNow = vm.canNotify()
+        val promoteNow = vm.canPromote()
+        if ((notifyNow && !canNotify) || promoteNow != canPromote) vm.resyncNotifications()
+        canNotify = notifyNow
+        canPromote = promoteNow
         onPauseOrDispose { }
     }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -114,6 +118,26 @@ fun SettingsScreen(vm: MainViewModel) {
                     },
                     modifier = Modifier.padding(bottom = 10.dp),
                 ) { Text("Allow notifications", color = p.accentHi) }
+            }
+            if (canNotify && Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                Text(
+                    if (canPromote) "Live Update on — the elapsed time also shows as a chip in the status bar."
+                    else "Live Update off — no timer chip in the status bar.",
+                    color = if (canPromote) p.muted else p.star,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = 10.dp),
+                )
+                if (!canPromote) {
+                    OutlinedButton(
+                        onClick = {
+                            context.startActivity(
+                                Intent(Settings.ACTION_APP_NOTIFICATION_PROMOTION_SETTINGS)
+                                    .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            )
+                        },
+                        modifier = Modifier.padding(bottom = 10.dp),
+                    ) { Text("Turn on Live Update", color = p.accentHi) }
+                }
             }
         }
 

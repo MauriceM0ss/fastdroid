@@ -60,6 +60,10 @@ class FastNotifier(private val context: Context, private val settings: SettingsS
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
             PackageManager.PERMISSION_GRANTED) && manager.areNotificationsEnabled()
 
+    /** Whether the user allows Live Updates for this app (Android 16+; always false before). */
+    fun canPromote(): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && manager.canPostPromotedNotifications()
+
     /**
      * The ongoing notification. The system renders the live elapsed time itself
      * via the chronometer, so nothing in the app has to run to keep it current.
@@ -86,6 +90,10 @@ class FastNotifier(private val context: Context, private val settings: SettingsS
             .setOnlyAlertOnce(true)
             .setSilent(true)
             .setCategory(NotificationCompat.CATEGORY_STOPWATCH)
+            // Android 16+ promotes this to a Live Update: a status-bar chip showing the
+            // chronometer, also on the lock screen. Requires ongoing, a title, no custom
+            // view and no setColorized(); ignored on older versions.
+            .setRequestPromotedOngoing(true)
             .setContentIntent(openApp())
             // Android 14+ lets ongoing notifications be swiped away; this puts it straight back.
             .setDeleteIntent(broadcast(FastActionReceiver.ACTION_DISMISSED, FastActionReceiver.REQUEST_DISMISSED))

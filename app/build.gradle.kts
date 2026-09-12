@@ -7,16 +7,16 @@ plugins {
 
 android {
     namespace = "io.github.mauricem0ss.fastdroid"
-    compileSdk = 35
-    // Pinned to what the build image ships; AGP's default would try to download 34.0.0 into a read-only SDK.
-    buildToolsVersion = "35.0.0"
+    compileSdk = 36
+    // Pinned to what the build image ships; AGP's default may differ and the image's SDK is read-only.
+    buildToolsVersion = "36.0.0"
 
     defaultConfig {
         applicationId = "io.github.mauricem0ss.fastdroid"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        targetSdk = 36
+        versionCode = 2
+        versionName = "0.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
