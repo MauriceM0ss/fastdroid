@@ -11,17 +11,17 @@ permission.
   time. The target defaults to 16:8 and is configurable (presets 12:12 to 23:1, or
   anything from 1h to 72h in 30-minute steps). A running fast's own target can be
   changed without touching the default.
-- **Ongoing notification** — start time, target end and a live elapsed clock, plus
-  an *End fast* button. The system renders the clock itself, so nothing runs in the
+- **Ongoing notification** — start time, target end and a live elapsed clock; tap it
+  to open the app. There's deliberately no *End fast* button: it was too easy to hit
+  by accident. The system renders the clock itself, so nothing runs in the
   background. Swiping it away puts it straight back while a fast is running.
 - **Status-bar timer chip** — on Android 16+ the running fast is a Live Update: the
   elapsed time shows as a chip in the status bar and on the lock screen. It can be
   switched off per app in system settings; FastDroid's Settings shows its state.
 - **Target alert** — one alarm at the target time. The fast keeps going until you
   end it.
-- **End any time** — ending early is a normal outcome, not a failure. Ending from
-  the app offers an undo snackbar; ending from the notification posts an *Undo*
-  notification for ten minutes.
+- **End any time** — ending early is a normal outcome, not a failure. Ending offers
+  an undo snackbar.
 - **History** — a month calendar. A fast belongs to the day it *ended*. A green dot
   means a fast that day reached its target; amber means it ended early. Tap a day to
   edit or delete its fasts, or add one you forgot to track.

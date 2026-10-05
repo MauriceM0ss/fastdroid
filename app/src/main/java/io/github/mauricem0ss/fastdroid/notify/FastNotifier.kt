@@ -47,12 +47,8 @@ class FastNotifier(private val context: Context, private val settings: SettingsS
                 description = "One alert when a fast reaches its target"
             }
         )
-        system.createNotificationChannel(
-            NotificationChannel(CHANNEL_ENDED, "Fast ended", NotificationManager.IMPORTANCE_LOW).apply {
-                description = "Confirmation with an undo after ending a fast from a notification"
-                setShowBadge(false)
-            }
-        )
+        // The notification lost its "End fast" button (too easy to hit by accident), and with it the undo confirmation.
+        system.deleteNotificationChannel("fast_ended")
     }
 
     fun canNotify(): Boolean =
@@ -97,7 +93,6 @@ class FastNotifier(private val context: Context, private val settings: SettingsS
             .setContentIntent(openApp())
             // Android 14+ lets ongoing notifications be swiped away; this puts it straight back.
             .setDeleteIntent(broadcast(FastActionReceiver.ACTION_DISMISSED, FastActionReceiver.REQUEST_DISMISSED))
-            .addAction(0, "End fast", broadcast(FastActionReceiver.ACTION_END, FastActionReceiver.REQUEST_END))
             .build()
         notify(ID_ACTIVE, notification)
     }
@@ -119,32 +114,6 @@ class FastNotifier(private val context: Context, private val settings: SettingsS
             .build()
         notify(ID_TARGET, notification)
     }
-
-    /** Shown after "End fast" on the notification, where a mis-tap is easy and there's no app UI to undo from. */
-    fun showEnded(fast: Fast) {
-        if (!canNotify()) return
-        val resume = PendingIntent.getBroadcast(
-            context,
-            FastActionReceiver.REQUEST_RESUME,
-            Intent(context, FastActionReceiver::class.java)
-                .setAction(FastActionReceiver.ACTION_RESUME)
-                .putExtra(FastActionReceiver.EXTRA_FAST_ID, fast.id),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-        val notification = NotificationCompat.Builder(context, CHANNEL_ENDED)
-            .setSmallIcon(R.drawable.ic_stat_fast)
-            .setColor(accent())
-            .setContentTitle("Fast ended · ${Formatting.duration(FastRules.elapsedMillis(fast, fast.endedAt!!))}")
-            .setContentText("${time(fast.startedAt)} → ${time(fast.endedAt)}")
-            .setAutoCancel(true)
-            .setTimeoutAfter(ENDED_TIMEOUT_MS)
-            .setContentIntent(openApp())
-            .addAction(0, "Undo", resume)
-            .build()
-        notify(ID_ENDED, notification)
-    }
-
-    fun cancelEnded() = manager.cancel(ID_ENDED)
 
     private fun notify(id: Int, notification: android.app.Notification) {
         if (canNotify()) {
@@ -182,10 +151,7 @@ class FastNotifier(private val context: Context, private val settings: SettingsS
     private companion object {
         const val CHANNEL_ACTIVE = "fast_running"
         const val CHANNEL_TARGET = "fast_target"
-        const val CHANNEL_ENDED = "fast_ended"
         const val ID_ACTIVE = 1
         const val ID_TARGET = 2
-        const val ID_ENDED = 3
-        const val ENDED_TIMEOUT_MS = 10 * 60_000L
     }
 }
