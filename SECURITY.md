@@ -33,6 +33,13 @@ It lives in the app's private storage (a Room/SQLite database).
 | 9 | **Build image ran as root by default** (Trivy DS-0002). `scripts/gradle.sh` always passed `--user`, but other ways of running the image did not. | Low | **Fixed** — `USER 65534` in the Dockerfile |
 | 10 | **No `HEALTHCHECK` in the Dockerfile** (Trivy DS-0026) | — | **Not applicable** — a build image exits after each build; it isn't a service |
 
+## Continuous monitoring
+
+Dependabot alerts and security updates are on. GitHub can't read this Gradle build
+by itself, so `.github/workflows/dependency-submission.yml` resolves it on every push
+to `main` and submits the dependency graph. Dependabot's fix PRs bump versions
+but not the lockfiles: run `scripts/gradle.sh lock` on the PR branch before merging.
+
 ## Re-running the checks
 
 ```bash
