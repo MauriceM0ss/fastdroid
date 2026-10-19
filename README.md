@@ -5,6 +5,19 @@ whenever you want, see the month at a glance. No streaks, badges, achievements,
 ads, accounts or network access — the app doesn't even request the INTERNET
 permission.
 
+<p>
+  <img src="docs/screenshots/timer.png" width="240" alt="Timer: a running 16:8 fast with progress ring, elapsed time and target end">
+  <img src="docs/screenshots/history.png" width="240" alt="History: October calendar with green and amber day markers and one day's fast">
+  <img src="docs/screenshots/settings.png" width="240" alt="Settings: default target presets, theme choice and notification status">
+</p>
+<p>
+  <img src="docs/screenshots/timer-github.png" width="240" alt="Timer in the GitHub Dark theme">
+  <br>
+  <img src="docs/screenshots/live-update-chip.png" width="185" alt="Android 16 status-bar chip showing the elapsed fasting time">
+</p>
+
+<sub>Screenshots use made-up demo data.</sub>
+
 ## What it does
 
 - **Timer** — start now or "I started earlier…", with a progress ring and elapsed
