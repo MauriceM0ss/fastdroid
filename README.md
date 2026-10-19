@@ -1,5 +1,9 @@
 # FastDroid
 
+> ⚠️ **Disclaimer:** This is a Claude Code "vibe coding" project. It was built
+> iteratively with the [Claude Code](https://claude.com/claude-code) AI agent
+> and is intended for personal use. Review the code before relying on it.
+
 A deliberately plain intermittent-fasting tracker for Android. Start a fast, end it
 whenever you want, see the month at a glance. No streaks, badges, achievements,
 ads, accounts or network access — the app doesn't even request the INTERNET
@@ -54,6 +58,10 @@ SHA-256 of every tool it downloads. The Gradle cache and the debug signing key l
 `~/.cache/fastdroid-build`, so the key persists between builds (a new key would make
 `adb install -r` refuse to update the app). `~/.android` is deliberately not mounted:
 it also holds `adbkey`, the key that authorises USB debugging on your phone.
+
+Library and build-plugin versions are pinned in `app/gradle.lockfile` and
+`buildscript-gradle.lockfile`. After changing `gradle/libs.versions.toml`, regenerate
+them with `scripts/gradle.sh lock`.
 
 Instrumented tests (Room against real SQLite) need a device; the container has no
 USB access, so install both APKs from the host and run them there:

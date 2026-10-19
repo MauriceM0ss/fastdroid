@@ -11,6 +11,15 @@
 set -euo pipefail
 
 repo="$(cd "$(dirname "$0")/.." && pwd)"
+# `scripts/gradle.sh lock` regenerates the dependency lockfiles
+# (app/gradle.lockfile, buildscript-gradle.lockfile) after a version bump. It runs
+# the real build, test and lint tasks: the Kotlin and Android plugins add
+# dependencies at build time that `dependencies` alone never resolves.
+if [ "${1:-}" = lock ]; then
+  set -- buildEnvironment :app:dependencies \
+    assembleDebug assembleRelease assembleDebugAndroidTest testDebugUnitTest lintDebug \
+    --write-locks
+fi
 # Tagged by the Dockerfile's hash, so editing the Dockerfile (e.g. a new SDK
 # platform) rebuilds the image on the next run instead of silently reusing the old one.
 image="fastdroid-build:$(sha256sum "$repo/docker/Dockerfile" | cut -c1-12)"

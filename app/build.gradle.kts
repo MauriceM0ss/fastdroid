@@ -42,6 +42,19 @@ android {
     }
 }
 
+// Pins the runtime classpaths (what ends up in the APK) in app/gradle.lockfile, so
+// builds are reproducible and scanners (osv-scanner, Trivy) can read the exact set.
+// Refresh after changing gradle/libs.versions.toml: scripts/gradle.sh lock
+configurations.matching { it.name == "debugRuntimeClasspath" || it.name == "releaseRuntimeClasspath" }
+    .configureEach { resolutionStrategy.activateDependencyLocking() }
+dependencyLocking {
+    // Empty compatibility shells, merged into kotlin-stdlib since Kotlin 1.8. They
+    // reach the graph only through version constraints, which --write-locks doesn't
+    // record but the lock check still rejects.
+    ignoredDependencies.add("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
+    ignoredDependencies.add("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+}
+
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }

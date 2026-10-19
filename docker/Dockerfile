@@ -47,3 +47,7 @@ RUN curl -fsSL -o /tmp/gradle.zip \
 RUN chmod -R a+rX "$ANDROID_HOME" "$GRADLE_HOME"
 
 WORKDIR /workspace
+
+# Non-root by default. scripts/gradle.sh still overrides this with --user so
+# files written into the bind-mounted repo belong to the host user.
+USER 65534:65534
