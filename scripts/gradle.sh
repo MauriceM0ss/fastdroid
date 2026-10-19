@@ -3,9 +3,11 @@
 #
 # --user matters: without it the container stamps root-owned files into the
 # repo (build/, .gradle/) and the next build fails with EACCES.
-# The Gradle cache lives in ~/.cache/fastdroid-build, and ~/.android is mounted
-# so the debug keystore persists — a fresh key per build would make
-# `adb install -r` refuse to update the app.
+# The Gradle cache and the debug signing key live in ~/.cache/fastdroid-build.
+# The key must persist: a fresh one per build would make `adb install -r`
+# refuse to update the app. ~/.android itself is deliberately NOT mounted: it
+# also holds adbkey, the private key that authorises USB debugging on your
+# phone, and the build runs third-party Gradle plugins and libraries.
 set -euo pipefail
 
 repo="$(cd "$(dirname "$0")/.." && pwd)"
@@ -18,7 +20,17 @@ if ! docker image inspect "$image" > /dev/null 2>&1; then
   docker build -t "$image" "$repo/docker" >&2
 fi
 
-mkdir -p "$home_cache" "$HOME/.android"
+# Older versions mounted ~/.android at this path, so Docker left it behind as an
+# empty root-owned directory; the user owns the parent, so it can be removed.
+if [ -d "$home_cache/.android" ] && [ ! -w "$home_cache/.android" ]; then
+  rmdir "$home_cache/.android"
+fi
+mkdir -p "$home_cache/.android"
+# Earlier versions of this script kept the key in ~/.android; copy it over once
+# so new builds still install over an existing app without losing its data.
+if [ ! -f "$home_cache/.android/debug.keystore" ] && [ -f "$HOME/.android/debug.keystore" ]; then
+  cp "$HOME/.android/debug.keystore" "$home_cache/.android/debug.keystore"
+fi
 
 tty_flag=()
 [ -t 1 ] && tty_flag=(-t)
@@ -28,7 +40,6 @@ exec docker run --rm "${tty_flag[@]}" \
   -e HOME=/build-home \
   -e GRADLE_USER_HOME=/build-home/gradle \
   -v "$home_cache:/build-home" \
-  -v "$HOME/.android:/build-home/.android" \
   -v "$repo:/workspace" \
   -w /workspace \
   "$image" gradle --console=plain "$@"

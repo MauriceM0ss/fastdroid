@@ -7,3 +7,7 @@ local.properties
 captures/
 *.apk
 *.aab
+# Signing material must never be committed.
+*.jks
+*.keystore
+keystore.properties

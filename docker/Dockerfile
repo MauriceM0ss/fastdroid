@@ -3,7 +3,11 @@
 FROM eclipse-temurin:17-jdk-jammy
 
 ARG CMDLINE_TOOLS_VERSION=11076708
+# Checked against Google's repository2-3.xml (SHA-1 d313adb7…) when pinned.
+ARG CMDLINE_TOOLS_SHA256=2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258
 ARG GRADLE_VERSION=8.11.1
+# From https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip.sha256
+ARG GRADLE_SHA256=f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6
 ARG ANDROID_PLATFORM=36
 ARG BUILD_TOOLS=36.0.0
 
@@ -19,6 +23,7 @@ RUN apt-get update \
 RUN mkdir -p "$ANDROID_HOME/cmdline-tools" \
  && curl -fsSL -o /tmp/tools.zip \
       "https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_VERSION}_latest.zip" \
+ && echo "${CMDLINE_TOOLS_SHA256}  /tmp/tools.zip" | sha256sum -c - \
  && unzip -q /tmp/tools.zip -d "$ANDROID_HOME/cmdline-tools" \
  && mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest" \
  && rm /tmp/tools.zip
@@ -33,6 +38,7 @@ RUN yes | sdkmanager --licenses > /dev/null \
 
 RUN curl -fsSL -o /tmp/gradle.zip \
       "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+ && echo "${GRADLE_SHA256}  /tmp/gradle.zip" | sha256sum -c - \
  && unzip -q /tmp/gradle.zip -d /opt \
  && mv "/opt/gradle-${GRADLE_VERSION}" "$GRADLE_HOME" \
  && rm /tmp/gradle.zip

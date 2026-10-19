@@ -36,10 +36,11 @@ scripts/gradle.sh testDebugUnitTest assembleDebug   # JVM tests + debug APK
 scripts/install.sh                                  # build, install over ADB, launch
 ```
 
-The first run builds the `fastdroid-build` image from `docker/Dockerfile`. The Gradle
-cache lives in `~/.cache/fastdroid-build`, and `~/.android` is mounted so the debug
-signing key persists between builds (a new key would make `adb install -r` refuse to
-update the app).
+The first run builds the `fastdroid-build` image from `docker/Dockerfile`, verifying the
+SHA-256 of every tool it downloads. The Gradle cache and the debug signing key live in
+`~/.cache/fastdroid-build`, so the key persists between builds (a new key would make
+`adb install -r` refuse to update the app). `~/.android` is deliberately not mounted:
+it also holds `adbkey`, the key that authorises USB debugging on your phone.
 
 Instrumented tests (Room against real SQLite) need a device; the container has no
 USB access, so install both APKs from the host and run them there:
@@ -59,6 +60,10 @@ adb shell am instrument -w io.github.mauricem0ss.fastdroid.test/androidx.test.ru
 | `domain/` | Pure rules (day attribution, success, validation) and formatting; covered by JVM tests |
 | `notify/` | Notifications, the target alarm, and the receiver for notification actions and boot |
 | `ui/` | Compose screens: timer, history, settings |
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for the threat model and review findings.
 
 ## Licence
 
